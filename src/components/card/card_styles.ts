@@ -13,11 +13,6 @@ export default StyleSheet.create({
     elevation: 5,
   },
 
-  colorBar: {
-    height: 6,
-    width: "100%",
-  },
-
   card: {
     padding: 16,
     backgroundColor: "#ffff",
@@ -222,68 +217,5 @@ export default StyleSheet.create({
   colorOptionSelected: {
     borderColor: "#333",
     transform: [{ scale: 1.1 }],
-  },
-
-  // Delete confirmation modal styles
-  confirmContainer: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 24,
-    width: 280,
-    alignItems: "center",
-  },
-
-  confirmTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-
-  confirmMessage: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-
-  confirmButtons: {
-    flexDirection: "row",
-    gap: 12,
-  },
-
-  confirmCancelButton: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#e0e0e0",
-    alignItems: "center",
-  },
-
-  confirmCancelText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-  },
-
-  confirmDeleteButton: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#f44336",
-    alignItems: "center",
-  },
-
-  confirmDeleteText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  editActionButton: {
-    backgroundColor: "#2196F3", // blue
-  },
-  imagePickerButton: {
-    backgroundColor: "#a2ff00ff", // yellow
-    borderColor: "#304c00fc",
   },
 });

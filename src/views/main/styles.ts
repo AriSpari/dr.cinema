@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { lighterBlue, gray } from "../../styles/colors";
+import { HeaderTitle } from "@react-navigation/elements";
 
 export default StyleSheet.create({
     container: {
@@ -23,5 +24,11 @@ export default StyleSheet.create({
         color: "white",
         fontSize: 16,
         fontWeight: "bold",
-    }
+    },
+    HeaderTitle: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 20,
+    },
+
 });
