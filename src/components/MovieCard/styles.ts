@@ -40,6 +40,38 @@ export default StyleSheet.create({
         fontSize: 12,
         color: colors.gray,
     },
+    ratingsRow: {
+        flexDirection: 'row',
+        marginTop: 6,
+        gap: 8,
+    },
+    ratingBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f5c518',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+    },
+    rottenBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fa320a',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+    },
+    ratingLabel: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: colors.white,
+        marginRight: 4,
+    },
+    ratingValue: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: colors.white,
+    },
     certificate: {
         position: 'absolute',
         top: 8,
