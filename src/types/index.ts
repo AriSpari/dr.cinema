@@ -118,8 +118,3 @@ export type Review = {
     text: string;
     createdAt: string;
 };
-
-export type FavouriteMovie = Movie & {
-    addedAt: string;
-    order: number;
-};
