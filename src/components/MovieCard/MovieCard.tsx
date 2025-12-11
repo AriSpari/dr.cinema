@@ -17,6 +17,8 @@ export function MovieCard({ movie, cinemaId, showShowtimes }: MovieCardProps) {
     const title = omdb?.Title || movie.title;
     const year = omdb?.Year || movie.year;
     const genres = movie.genres?.map(g => g.NameEN).join(', ') || omdb?.Genre || '';
+    const imdbRating = movie.ratings?.imdb;
+    const rottenRating = movie.ratings?.rotten_critics;
 
     const handlePress = () => {
         let path = `/movie/${movie.id}`;
@@ -41,6 +43,22 @@ export function MovieCard({ movie, cinemaId, showShowtimes }: MovieCardProps) {
                 <Text style={styles.title} numberOfLines={2}>{title}</Text>
                 <Text style={styles.year}>{year}</Text>
                 {genres ? <Text style={styles.genres} numberOfLines={1}>{genres}</Text> : null}
+
+                <View style={styles.ratingsRow}>
+                    {imdbRating && (
+                        <View style={styles.ratingBadge}>
+                            <Text style={styles.ratingLabel}>IMDB</Text>
+                            <Text style={styles.ratingValue}>{imdbRating}</Text>
+                        </View>
+                    )}
+                    {rottenRating && rottenRating !== '0' && (
+                        <View style={styles.rottenBadge}>
+                            <Text style={styles.ratingLabel}>RT</Text>
+                            <Text style={styles.ratingValue}>{rottenRating}%</Text>
+                        </View>
+                    )}
+                </View>
+
                 {showShowtimes && relevantShowtimes && relevantShowtimes.length > 0 && (
                     <View style={styles.showtimesContainer}>
                         {relevantShowtimes.slice(0, 1).map((showtime, idx) => (
