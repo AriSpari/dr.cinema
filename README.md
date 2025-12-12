@@ -1,3 +1,21 @@
+Assignment III - Dr. Cinema
+
+Ari Þórðarson, Valgarður Nói Davíðsson and Guðmundur Jón Bergmannsson
+
+
+It is important to add your own API key in secret.ts
+
+Then use command "npx expo start" to launch the app.
+
+The app was created with a focus on android devices so please use android when testing the app.
+
+The extra requirements we implemented were the movie reviews and ratings.
+
+
+
+Below is the original README
+
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
