@@ -62,9 +62,11 @@ export function MovieCard({ movie, cinemaId, showShowtimes }: MovieCardProps) {
                 {showShowtimes && relevantShowtimes && relevantShowtimes.length > 0 && (
                     <View style={styles.showtimesContainer}>
                         {relevantShowtimes.slice(0, 1).map((showtime, idx) => (
-                            <View key={idx} style={styles.showtimeRow}>
+                            <View key={`${movie.id}-showtime-${idx}`} style={styles.showtimeRow}>
                                 {showtime.schedule.slice(0, 3).map((s, i) => (
-                                    <Text key={i} style={styles.showtimeText}>{s.time}</Text>
+                                    <Text key={`${movie.id}-showtime-${idx}-time-${i}`} style={styles.showtimeText}>
+                                        {s.time}
+                                    </Text>
                                 ))}
                                 {showtime.schedule.length > 3 && (
                                     <Text style={styles.moreText}>+{showtime.schedule.length - 3} more</Text>
