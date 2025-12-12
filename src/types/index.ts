@@ -62,13 +62,13 @@ export type Showtime = {
 
 export type Trailer = {
     url?: string;
-    results?: Array<{
+    results?: {
         id: string;
         key: string;
         name: string;
         site: string;
         type: string;
-    }>;
+    }[];
 };
 
 export type Movie = {
