@@ -18,7 +18,27 @@ export function Upcoming() {
     const [playing, setPlaying] = useState(false);
 
     useEffect(() => {
+        const loadUpcoming = async () => {
+            try {
+                setLoading(true);
+                const data = await fetchUpcomingMovies();
+                const upcomingArray = Array.isArray(data) ? data : (data as any)?.upcoming || [];
+                
+                // Remove duplicates based on ID
+                const uniqueMovies = upcomingArray.filter((movie: Movie, index: number, self: Movie[]) => 
+                    index === self.findIndex((m) => m.id === movie.id)
+                );
+                
+                context?.setUpcomingMovies(uniqueMovies);
+            } catch (err: any) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         loadUpcoming();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const loadUpcoming = async () => {
@@ -26,7 +46,13 @@ export function Upcoming() {
             setLoading(true);
             const data = await fetchUpcomingMovies();
             const upcomingArray = Array.isArray(data) ? data : (data as any)?.upcoming || [];
-            context?.setUpcomingMovies(upcomingArray);
+            
+            // Remove duplicates based on ID
+            const uniqueMovies = upcomingArray.filter((movie: Movie, index: number, self: Movie[]) => 
+                index === self.findIndex((m) => m.id === movie.id)
+            );
+            
+            context?.setUpcomingMovies(uniqueMovies);
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -77,7 +103,7 @@ export function Upcoming() {
         <View style={styles.container}>
             <FlatList
                 data={context?.upcomingMovies || []}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item, index) => `${item.id}-${index}`}
                 renderItem={({ item }) => {
                     const omdb = item.omdb?.[0];
                     const poster = omdb?.Poster && omdb.Poster !== 'N/A' ? omdb.Poster : item.poster;

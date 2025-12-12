@@ -30,6 +30,7 @@ export function Cinemas() {
         }
     };
 
+    
     const sortedCinemas = [...(context?.cinemas || [])].sort((a, b) =>
         a.name.localeCompare(b.name, 'is')
     );
