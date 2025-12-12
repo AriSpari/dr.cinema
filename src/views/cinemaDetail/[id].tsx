@@ -83,7 +83,7 @@ export function CinemaDetail() {
             <View style={styles.container}>
                 <FlatList
                     data={cinemaMovies}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item, index) => `${item.id}-${index}`}
                     renderItem={({ item }) => (
                         <MovieCard movie={item} cinemaId={cinemaId} showShowtimes />
                     )}
