@@ -1,5 +1,8 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Movie, Cinema, Review } from "@/src/types";
+
+const REVIEWS_KEY = '@dr_cinema_reviews';
 
 export type AppContextType = {
     movies: Movie[];
@@ -22,6 +25,20 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const [cinemas, setCinemas] = useState<Cinema[]>([]);
     const [favourites, setFavourites] = useState<Movie[]>([]);
     const [reviews, setReviews] = useState<Review[]>([]);
+
+    useEffect(() => {
+        const loadReviews = async () => {
+            try {
+                const data = await AsyncStorage.getItem(REVIEWS_KEY);
+                if (data) {
+                    setReviews(JSON.parse(data));
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+            }
+        };
+        loadReviews();
+    }, []);
 
     return (
         <AppContext.Provider value={{
