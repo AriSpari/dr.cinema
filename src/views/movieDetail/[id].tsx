@@ -1,15 +1,17 @@
 import React, { useContext, useState, useCallback } from 'react';
-import { View, Text, ScrollView, Image, ActivityIndicator, TouchableOpacity, Linking, Modal, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Image, ActivityIndicator, TouchableOpacity, Linking, Modal, Dimensions, TextInput } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { AppContext } from '@/context/appcontext';
 import { colors } from '@/src/styles/colors';
+import { Review } from '@/src/types';
 import styles from './styles';
 
 const { width } = Dimensions.get('window');
 const FAVOURITES_KEY = '@dr_cinema_favourites';
+const REVIEWS_KEY = '@dr_cinema_reviews';
 
 export function MovieDetail() {
     const { id, cinemaId } = useLocalSearchParams<{ id: string; cinemaId?: string }>();
@@ -17,12 +19,16 @@ export function MovieDetail() {
 
     const [trailerVisible, setTrailerVisible] = useState(false);
     const [playing, setPlaying] = useState(false);
+    const [reviewModalVisible, setReviewModalVisible] = useState(false);
+    const [newRating, setNewRating] = useState(0);
+    const [newReviewText, setNewReviewText] = useState('');
 
     const movieId = parseInt(id, 10);
     const selectedCinemaId = cinemaId ? parseInt(cinemaId, 10) : null;
 
     const movie = context?.movies.find(m => m.id === movieId);
     const isFavourite = context?.favourites.some(f => f.id === movieId);
+    const movieReviews = context?.reviews.filter(r => r.movieId === movieId) || [];
 
     const omdb = movie?.omdb?.[0];
     const poster = omdb?.Poster && omdb.Poster !== 'N/A' ? omdb.Poster : movie?.poster;
@@ -61,6 +67,52 @@ export function MovieDetail() {
         }
         context.setFavourites(newFavs);
         await AsyncStorage.setItem(FAVOURITES_KEY, JSON.stringify(newFavs));
+    };
+
+    const handleSubmitReview = async () => {
+        if (!context || newRating === 0) return;
+
+        const newReview: Review = {
+            id: `${movieId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            movieId,
+            rating: newRating,
+            text: newReviewText.trim(),
+            createdAt: new Date().toISOString(),
+        };
+
+        const updatedReviews = [...context.reviews, newReview];
+        context.setReviews(updatedReviews);
+        await AsyncStorage.setItem(REVIEWS_KEY, JSON.stringify(updatedReviews));
+
+        setReviewModalVisible(false);
+        setNewRating(0);
+        setNewReviewText('');
+    };
+
+    const renderStars = (rating: number, interactive = false) => {
+        return (
+            <View style={styles.starsRow}>
+                {[1, 2, 3, 4, 5].map(star => (
+                    <TouchableOpacity
+                        key={star}
+                        disabled={!interactive}
+                        onPress={() => interactive && setNewRating(star)}
+                        style={interactive ? styles.starButton : undefined}
+                    >
+                        <Ionicons
+                            name={star <= rating ? 'star' : 'star-outline'}
+                            size={interactive ? 32 : 16}
+                            color={colors.yellow}
+                        />
+                    </TouchableOpacity>
+                ))}
+            </View>
+        );
+    };
+
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString();
     };
 
     const relevantShowtimes = movie?.showtimes?.filter(st =>
@@ -175,6 +227,34 @@ export function MovieDetail() {
                             ))}
                         </View>
                     )}
+
+                    <View style={styles.section}>
+                        <View style={styles.reviewsHeader}>
+                            <Text style={styles.sectionTitle}>Reviews</Text>
+                            <TouchableOpacity
+                                style={styles.addReviewButton}
+                                onPress={() => setReviewModalVisible(true)}
+                            >
+                                <Ionicons name="add" size={18} color={colors.white} />
+                                <Text style={styles.addReviewButtonText}>Add Review</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {movieReviews.length === 0 ? (
+                            <Text style={styles.noReviewsText}>No reviews yet. Be the first to review!</Text>
+                        ) : (
+                            movieReviews.map(review => (
+                                <View key={review.id} style={styles.reviewCard}>
+                                    <View style={styles.reviewHeader}>
+                                        {renderStars(review.rating)}
+                                        <Text style={styles.reviewDate}>{formatDate(review.createdAt)}</Text>
+                                    </View>
+                                    {review.text ? (
+                                        <Text style={styles.reviewText}>{review.text}</Text>
+                                    ) : null}
+                                </View>
+                            ))
+                        )}
+                    </View>
                 </View>
 
                 <Modal
@@ -200,6 +280,53 @@ export function MovieDetail() {
                                     onChangeState={onStateChange}
                                 />
                             )}
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal
+                    visible={reviewModalVisible}
+                    animationType="fade"
+                    transparent
+                    onRequestClose={() => {
+                        setReviewModalVisible(false);
+                        setNewRating(0);
+                        setNewReviewText('');
+                    }}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.reviewModalContent}>
+                            <Text style={styles.reviewModalTitle}>Write a Review</Text>
+                            <View style={styles.ratingSelector}>
+                                {renderStars(newRating, true)}
+                            </View>
+                            <TextInput
+                                style={styles.reviewInput}
+                                placeholder="Share your thoughts about this movie (optional)"
+                                placeholderTextColor={colors.gray}
+                                multiline
+                                value={newReviewText}
+                                onChangeText={setNewReviewText}
+                            />
+                            <View style={styles.reviewModalButtons}>
+                                <TouchableOpacity
+                                    style={styles.cancelButton}
+                                    onPress={() => {
+                                        setReviewModalVisible(false);
+                                        setNewRating(0);
+                                        setNewReviewText('');
+                                    }}
+                                >
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.submitButton, newRating === 0 && styles.submitButtonDisabled]}
+                                    onPress={handleSubmitReview}
+                                    disabled={newRating === 0}
+                                >
+                                    <Text style={styles.submitButtonText}>Submit</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </Modal>

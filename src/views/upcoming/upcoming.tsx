@@ -77,7 +77,7 @@ export function Upcoming() {
         <View style={styles.container}>
             <FlatList
                 data={context?.upcomingMovies || []}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item, index) => `${item.id}-${index}`}
                 renderItem={({ item }) => {
                     const omdb = item.omdb?.[0];
                     const poster = omdb?.Poster && omdb.Poster !== 'N/A' ? omdb.Poster : item.poster;
